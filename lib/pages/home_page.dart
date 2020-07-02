@@ -8,16 +8,16 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
       appBar: AppBar(
-        title: Icon(Icons.people),
+        title: Text('TKS Mobile'),//Icon(Icons.people),
         centerTitle: true,
         backgroundColor: Color(0xFF065300),
         bottom: TabBar(
               labelColor: Colors.white,
             tabs: <Widget>[
-              Tab(icon: Icon(Icons.home)), // Pagina Inicial
+             // Tab(icon: Icon(Icons.home)), // Pagina Inicial
               Tab(icon: Icon(Icons.assignment)), // Projetos em Aberto
               Tab(icon: Icon(Icons.devices_other)), // Dispositivos MQTT
               Tab(icon: Icon(Icons.brightness_7)), // Configurações
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         ),
       body: TabBarView(
         children: <Widget>[
-          homepage(), // Pagina Inicial
+          //homepage(), // Pagina Inicial
           testesPage(), // Projetos em Aberto
           devicespage(), // Dispositivos MQTT
           configuracaopage(), // Configurações

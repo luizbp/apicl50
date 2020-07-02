@@ -171,7 +171,7 @@ class _testesPageInState extends State<testesPageIn> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: _textField("Nome",_nomeController, TextInputType.text, 1, (text){
+                  child: _textField("Nome do Teste",_nomeController, TextInputType.text, 1, (text){
                   _editado = true;
                   setState(() {
                     _testeEdit.nome = text;

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/teste.dart';
 import 'testes_in.dart';
 import '../lib/funcoesDart.dart';
-import '../lib/modal.dart';
+import 'aval_testes.dart';
 
 class testesPage extends StatefulWidget {
   @override
@@ -22,14 +22,10 @@ class _testesPageState extends State<testesPage> {
     _refreshListaTestes();
   }
 
-
-
-  
-
   _deletarTeste(Teste teste){
 
   }
-
+  
   void _refreshListaTestes(){
     db.getTestes().then((lista){
     setState(() {
@@ -70,6 +66,15 @@ class _testesPageState extends State<testesPage> {
     }
   }
 
+  void _exibeAvalTestes(Teste teste) async{
+     Navigator.push(
+      context, 
+      MaterialPageRoute(
+        builder: (context) => AvalTestes(teste)
+      )
+    );
+  }
+
   listarTestes(){
     return ListView.builder(
       itemCount: testes.length,
@@ -95,6 +100,9 @@ class _testesPageState extends State<testesPage> {
           ),
           onLongPress: (){
             _exibeTestePageIn(teste: testes[index]);
+          },
+          onTap: (){
+            _exibeAvalTestes(testes[index]);
           },
         );
       },

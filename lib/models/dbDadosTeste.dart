@@ -32,7 +32,7 @@ class DbDadosTeste{
     if(_dataBase == null){
       _dataBase = await initializeDatabase();
     }
-    return database;
+    return _dataBase;
   }
 
   Future<Database> initializeDatabase() async{
@@ -105,6 +105,18 @@ class DbDadosTeste{
 
     var result = Sqflite.firstIntValue(x);
     return result;
+  }
+
+  Future<List<DadosTeste>> getDadosTesteToTeste(int testeId) async{
+    Database db = await this.database;
+    var result = await db.query(tabDadosTeste,
+    where: "$colIdTeste = ?",
+    whereArgs: [testeId]);
+
+    List<DadosTeste> maps = result.isNotEmpty ? result.map(
+    (e) =>  DadosTeste.fromMap(e)).toList() : [];
+
+    return maps;
   }
 
   Future close() async{
