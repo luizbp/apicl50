@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:cl50app/models/dbTestes.dart';
 import 'package:flutter/material.dart';
 import '../models/teste.dart';
-import 'testes_in.dart';
+import 'testesEdit.dart';
 import '../lib/funcoesDart.dart';
-import 'aval_testes.dart';
+import 'avalTestes.dart';
 
 class testesPage extends StatefulWidget {
   @override
@@ -83,7 +83,7 @@ class _testesPageState extends State<testesPage> {
           leading: CircleAvatar(
             backgroundColor: Color(int.parse(testes[index].cor)),
             child: Text(
-              getIniciais(testes[index].nome, 2).toUpperCase(),
+              getIniciais(testes[index].nome, 1).toUpperCase(),
               style: TextStyle(color: Colors.white),
             ),
           ), 
