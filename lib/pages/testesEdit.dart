@@ -237,19 +237,19 @@ class _testesPageInState extends State<testesPageIn> {
                       });
                     }
                   )
-                ),
-                Expanded(
-                  child: _comboBox(
-                    "Desativado",
-                    _listTipoTeste, 
-                    "Preliminar", 
-                    (String item){
-                      setState(() {
-                        item = item;
-                      });
-                    }
-                  )
                 )
+                // Expanded(
+                //   child: _comboBox(
+                //     "Desativado",
+                //     _listTipoTeste, 
+                //     "Preliminar", 
+                //     (String item){
+                //       setState(() {
+                //         item = item;
+                //       });
+                //     }
+                //   )
+                // )
                 ],
               ),
               Row(
