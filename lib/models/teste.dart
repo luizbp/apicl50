@@ -23,7 +23,7 @@ class Teste{
   String limiteInferior;
 
   //Construtor
-  Teste(
+  Teste({
     this.id,
     this.nome,
     this.descricao,
@@ -40,7 +40,7 @@ class Teste{
     this.limiteSuperior,
     this.limiteInferior,
     this.statusTeste
-  );
+  });
 
   //Transforma o objeto em um Map para gravar no banco
   Map<String, dynamic> toMap(){

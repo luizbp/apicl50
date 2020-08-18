@@ -1,11 +1,11 @@
-import 'package:cl50app/models/dadosTeste.dart';
+import 'package:cl50app/models/concentracaoTeste.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:random_color/random_color.dart';
 import '../lib/funcoesDart.dart';
 import '../models/teste.dart';
-import '../models/dadosTeste.dart';
-import '../models/dbDadosTeste.dart';
+import '../models/concentracaoTeste.dart';
+import '../models/dbConcentracaoTeste.dart';
+import 'package:intl/intl.dart';
 
 class AvalTestes extends StatefulWidget {
   final Teste teste;
@@ -19,9 +19,8 @@ class AvalTestes extends StatefulWidget {
 class _AvalTestesState extends State<AvalTestes> {
 
   Teste _testeAval;
-  List<DadosTeste> _dadosTeste = List<DadosTeste>();
-  DbDadosTeste db = DbDadosTeste();
-  RandomColor _randomColor = RandomColor();
+  List<ConcentracaoTeste> _dadosTeste = List<ConcentracaoTeste>();
+  DbConcentracaoTeste dbConcetracao = DbConcentracaoTeste();
   
   @override
   void initState() {
@@ -31,7 +30,7 @@ class _AvalTestesState extends State<AvalTestes> {
   }
 
   atualizaLancamentos() async{
-    await db.getDadosTesteToTeste(_testeAval.id).then((lista){
+    await dbConcetracao.getByTeste(_testeAval.id).then((lista){
       this.setState(() {
       _dadosTeste = lista;
       });
@@ -52,57 +51,24 @@ class _AvalTestesState extends State<AvalTestes> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 20,
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // FlatButton(
-                //   child: Text(
-                //     '+',
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontWeight: FontWeight.bold,
-                //       fontSize: 25
-                //     ),
-                //   ),
-                //   color: Colors.blueAccent,
-                //   shape: new RoundedRectangleBorder(
-                //     borderRadius: new BorderRadius.circular(100)
-                //     ),
-                //   onPressed: (){
-
-                //   },
-                // ),
-                Padding(
-                  padding: const EdgeInsets.only(top:15, right: 20),
-                  child: Material(
-                    color: Colors.lightBlueAccent,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(100)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top:2,
-                        left: 10,
-                        right: 10,
-                        bottom: 2
-                      ),
-                      child: InkWell(
-                        child: Text(
-                          '+',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25
-                          ),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(100)
-                        ),
-                      ),
-                    ),
+                Text(
+                  'Concentrações',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold
                   ),
                 )
               ],
+            ),
+            SizedBox(
+              height: 10,
             ),
             SizedBox(
               height: 80,
@@ -116,13 +82,11 @@ class _AvalTestesState extends State<AvalTestes> {
                           scrollDirection: Axis.horizontal,
                           itemCount: _dadosTeste.length,
                           itemBuilder: (context, index){
-                            Color _color = _randomColor.randomColor(
-                              colorBrightness: ColorBrightness.light
-                            );
                             return Padding(
                               padding: EdgeInsets.all(5),
                               child: Material(
-                                color: _color,
+                                // color: _color,
+                                color: (index&1 == 0) ? Colors.green : Colors.lightGreen,
                                 borderRadius: new BorderRadius.all(
                                   Radius.circular(10)
                                 ),
@@ -161,41 +125,66 @@ class _AvalTestesState extends State<AvalTestes> {
                   )
                 ],
               ),
-            )
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FlatButton(
+                  textColor: Colors.lightBlue,
+                  onPressed: (){
+
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.add),
+                      Text(
+                        'Adicionar Concentração',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),  
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Divider(
+              thickness: 1,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  'Lançamentos de Mortalidade',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
-      // body: Container(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.start,
-      //     children: [
-      //       Row(
-      //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //         children: [
-      //           SizedBox(
-      //             child: Scrollbar(
-      //               child: ListView.builder(
-      //                 itemCount: _dadosTeste.length,
-      //                 scrollDirection: Axis.horizontal,
-      //                 itemBuilder: (context, index){
-      //                   return CircleAvatar(
-      //                     child: Text(_dadosTeste[index].concentracao.toString()),
-      //                   );
-      //                 },
-      //               ),
-      //             ),
-      //           ),
-      //         ]
-      //       )
-      //     ],
-      //   ),
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          // DadosTeste op = new DadosTeste(4, 1, 1.5, 0, 0);
-          // db.insertDadosTeste(op);
-          //print(_dadosTeste.length);
+          // ConcentracaoTeste op = new ConcentracaoTeste(
+          //   concentracao: 2.5,
+          //   idTeste: 1
+          // );
+          // dbConcetracao.insert(op);
+          // setState(() {
+          //   atualizaLancamentos();
+          // });
+          // print(_dadosTeste.length);
           // print(_testeAval.id);
+          DateTime now = DateTime.now();
+          String date = DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
+          print(date);
         },
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF065300),

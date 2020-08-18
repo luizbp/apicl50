@@ -80,6 +80,12 @@
       "languageVersion": "2.3"
     },
     {
+      "name": "intl",
+      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.16.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.5"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.8",
       "packageUri": "lib/",
@@ -132,12 +138,6 @@
       "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.1"
-    },
-    {
-      "name": "random_color",
-      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/random_color-1.0.5",
-      "packageUri": "lib/",
-      "languageVersion": "2.0"
     },
     {
       "name": "sky_engine",
@@ -218,7 +218,7 @@
       "languageVersion": "2.1"
     }
   ],
-  "generated": "2020-08-17T02:38:23.597891Z",
+  "generated": "2020-08-18T03:18:20.751246Z",
   "generator": "pub",
   "generatorVersion": "2.9.0"
 }

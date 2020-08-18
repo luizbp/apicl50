@@ -13,7 +13,7 @@ class testesPage extends StatefulWidget {
 
 class _testesPageState extends State<testesPage> {
 
-  DbTestes db = DbTestes();
+  DbTestes dbTeste = DbTestes();
   List<Teste> testes = List<Teste>();
 
   @override
@@ -27,7 +27,7 @@ class _testesPageState extends State<testesPage> {
   }
   
   void _refreshListaTestes(){
-    db.getTestes().then((lista){
+    dbTeste.getAll().then((lista){
     setState(() {
       testes = lista;
     });
@@ -58,9 +58,9 @@ class _testesPageState extends State<testesPage> {
 
     if(testeRecebido != null){
       if(teste != null){
-        await db.updateTeste(testeRecebido);
+        await dbTeste.update(testeRecebido);
       }else{
-        await db.insertTeste(testeRecebido);
+        await dbTeste.insert(testeRecebido);
       }
       _refreshListaTestes();
     }

@@ -11,7 +11,7 @@ class DbTestes{
   static Database _database;
 
   //Padronizando nome das colunas
-  String tabTestes = 'testes';
+  String tab = 'testes';
   String colId = 'id';
   String colNome = 'nome';
   String colDescricao = 'descricao';
@@ -49,14 +49,14 @@ class DbTestes{
 
   Future<Database> initializeDataBase() async{
     Directory directory = await getApplicationDocumentsDirectory(); // Pega o diretorio padrão do app pelo pacote path_procider
-    String path = directory.path + '$tabTestes.db';
+    String path = directory.path + '$tab.db';
 
     var dadosTesteDataBase = await openDatabase(path, version: 1, onCreate: _createDb);
     return dadosTesteDataBase;
   }
 
   void _createDb(Database db, int newVersion) async{
-    await db.execute('CREATE TABLE $tabTestes('
+    await db.execute('CREATE TABLE $tab('
       '$colId INTEGER PRIMARY KEY AUTOINCREMENT, ' 
       '$colNome TEXT,'
       '$colDescricao TEXT,'
@@ -77,17 +77,17 @@ class DbTestes{
   }
 
   //Insert no banco
-  Future<int> insertTeste(Teste dados) async{
+  Future<int> insert(Teste dados) async{
     Database db = await this.database;
-    var result = await db.insert(tabTestes, dados.toMap());
+    var result = await db.insert(tab, dados.toMap());
     return result;
   }
 
  //Função de select por ID
-  Future<Teste> getTeste(int id) async{
+  Future<Teste> getById(int id) async{
     Database db  = await this.database;
 
-    List<Map> maps = await db.query(tabTestes, 
+    List<Map> maps = await db.query(tab, 
     columns: [
       colId,
       colNome,
@@ -117,10 +117,10 @@ class DbTestes{
   }
 
   //Função de select por ID
-  Future<List<Teste>> getTestes() async{
+  Future<List<Teste>> getAll() async{
     Database db  = await this.database;
 
-    var result = await db.query(tabTestes);
+    var result = await db.query(tab);
 
     List<Teste> lista = result.isNotEmpty ? result.map(
       (c) => Teste.fromMap(c)).toList() : [];
@@ -130,10 +130,10 @@ class DbTestes{
   
 
   //Função de Update
-  Future<int> updateTeste(Teste dados) async{
+  Future<int> update(Teste dados) async{
     Database db = await this.database;
 
-    var result = await db.update(tabTestes, dados.toMap(),
+    var result = await db.update(tab, dados.toMap(),
     where: '$colId = ?',
     whereArgs: [dados.id]);
 
@@ -141,10 +141,10 @@ class DbTestes{
   }
 
   //Deletar um objeto Contato do Banco de Dados
-  Future<int> deleteTeste(int id) async{
+  Future<int> delete(int id) async{
     Database db = await this.database;
 
-    var result = await db.delete(tabTestes,
+    var result = await db.delete(tab,
     where: "$colId = ?",
     whereArgs: [id]);
 
@@ -154,7 +154,7 @@ class DbTestes{
   //Obtem o numero de linhas dentro da tabela
   Future<int> getCount() async{
     Database db = await this.database;
-    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT(*) FROM $tabTestes');
+    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT(*) FROM $tab');
 
     var result = Sqflite.firstIntValue(x);
     return result;
