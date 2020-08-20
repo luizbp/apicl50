@@ -16,6 +16,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'TKS Mobile',
       home: HomePage(),
+      // theme: ThemeData(
+      //   brightness: Brightness.dark
+      // ),
     );
   }
 }

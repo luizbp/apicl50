@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cl50app/models/mortalidadesConcentracao.dart';
+
 import 'concentracaoTeste.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -52,14 +54,14 @@ class DbMortalidadeConcentracao{
   }
 
   //INCLUIR DADOS NO BANCO
-  Future<int> insert(ConcentracaoTeste dados) async{
+  Future<int> insert(MortalidadeConcentracao dados) async{
     Database db = await this.database;
     var result = await db.insert(tab, dados.toMap());
     return result;
   }
 
   //Função de select por ID
-  Future<ConcentracaoTeste> getById(int id) async{
+  Future<MortalidadeConcentracao> getById(int id) async{
     Database db  = await this.database;
 
     List<Map> maps = await db.query(tab, 
@@ -68,14 +70,14 @@ class DbMortalidadeConcentracao{
     whereArgs: [id]);
 
     if(maps.length > 0){
-      return ConcentracaoTeste.fromMap(maps.first);
+      return MortalidadeConcentracao.fromMap(maps.first);
     }else{
       return null;
     }
   }
 
   //Função de Update
-  Future<int> update(ConcentracaoTeste dados) async{
+  Future<int> update(MortalidadeConcentracao dados) async{
     Database db = await this.database;
 
     var result = await db.update(tab, dados.toMap(),
@@ -105,14 +107,14 @@ class DbMortalidadeConcentracao{
     return result;
   }
 
-  Future<List<ConcentracaoTeste>> getByConcentracao(int concentracaoId) async{
+  Future<List<MortalidadeConcentracao>> getByConcentracao(int concentracaoId) async{
     Database db = await this.database;
     var result = await db.query(tab,
     where: "$colIdConcentracao = ?",
     whereArgs: [concentracaoId]);
 
-    List<ConcentracaoTeste> maps = result.isNotEmpty ? result.map(
-    (e) =>  ConcentracaoTeste.fromMap(e)).toList() : [];
+    List<MortalidadeConcentracao> maps = result.isNotEmpty ? result.map(
+    (e) =>  MortalidadeConcentracao.fromMap(e)).toList() : [];
 
     return maps;
   }

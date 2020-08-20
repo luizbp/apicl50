@@ -79,31 +79,33 @@ class _testesPageState extends State<testesPage> {
     return ListView.builder(
       itemCount: testes.length,
       itemBuilder: (context, index){
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Color(int.parse(testes[index].cor)),
-            child: Text(
-              getIniciais(testes[index].nome, 1).toUpperCase(),
-              style: TextStyle(color: Colors.white),
+        return Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Color(int.parse(testes[index].cor)),
+              child: Text(
+                getIniciais(testes[index].nome, 1).toUpperCase(),
+                style: TextStyle(color: Colors.white),
+              ),
+            ), 
+            trailing: _verificaStatus(testes[index].statusTeste),
+            title: Text(
+              testes[index].nome,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black
+              ),
             ),
-          ), 
-          trailing: _verificaStatus(testes[index].statusTeste),
-          title: Text(
-            testes[index].nome,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.black
+            subtitle: Text(
+              testes[index].descricao.substring(0) + '...',
             ),
+            onLongPress: (){
+              _exibeTestePageIn(teste: testes[index]);
+            },
+            onTap: (){
+              _exibeAvalTestes(testes[index]);
+            },
           ),
-          subtitle: Text(
-            testes[index].descricao.substring(0) + '...',
-          ),
-          onLongPress: (){
-            _exibeTestePageIn(teste: testes[index]);
-          },
-          onTap: (){
-            _exibeAvalTestes(testes[index]);
-          },
         );
       },
     );

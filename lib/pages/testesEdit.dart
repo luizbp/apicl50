@@ -226,30 +226,18 @@ class _testesPageInState extends State<testesPageIn> {
               ),
               Row(
                 children: <Widget>[
-                Expanded(
-                  child: _comboBox(
-                    "Tipo teste",
-                    _listTipoTeste, 
-                    _testeEdit.tipoTeste, 
-                    (String item){
-                      setState(() {
-                        _testeEdit.tipoTeste = item;
-                      });
-                    }
+                  Expanded(
+                    child: _comboBox(
+                      "Tipo teste",
+                      _listTipoTeste, 
+                      _testeEdit.tipoTeste, 
+                      (String item){
+                        setState(() {
+                          _testeEdit.tipoTeste = item;
+                        });
+                      }
+                    )
                   )
-                )
-                // Expanded(
-                //   child: _comboBox(
-                //     "Desativado",
-                //     _listTipoTeste, 
-                //     "Preliminar", 
-                //     (String item){
-                //       setState(() {
-                //         item = item;
-                //       });
-                //     }
-                //   )
-                // )
                 ],
               ),
               Row(
