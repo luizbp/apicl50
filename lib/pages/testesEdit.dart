@@ -1,3 +1,4 @@
+import 'package:cl50app/models/dbTestes.dart';
 import 'package:flutter/material.dart';
 import '../models/teste.dart';
 import '../lib/funcoesDart.dart';
@@ -155,6 +156,57 @@ class _testesPageInState extends State<testesPageIn> {
     );
   }
 
+  Future<bool> _openPopUpPergunta(context, String message) async {
+    bool result;
+    await showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: Container(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.device_unknown,
+                  color: Colors.blue,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  message
+                )
+              ],
+            ),
+          ),
+          actions: [
+            MaterialButton(
+              child: Icon(
+                Icons.check,
+                color: Colors.green,
+                ),
+              onPressed: (){
+                result = true;
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              child: Icon(
+                Icons.close,
+                color: Colors.red,
+                ),
+              onPressed: (){
+                result = false;
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      }
+    );
+
+    return result;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +215,27 @@ class _testesPageInState extends State<testesPageIn> {
           centerTitle: true,
           backgroundColor: Color(getColorTheme()),
           title: Text(_testeEdit.nome == '' ? 'Novo Teste' : _testeEdit.nome),
+          actions: [
+            FlatButton(
+              child: Icon(
+                Icons.restore_from_trash,
+                color: Colors.white,
+                ),
+              onPressed: () async{
+                bool result;
+                await _openPopUpPergunta(context, 'Deletar o teste?').then((value) async{
+                  result = value;
+                  if(value){
+                    DbTestes db = DbTestes();
+                    await db.delete(_testeEdit.id);
+                  }
+                });
+                if(result){
+                  Navigator.pop(context);
+                }
+              },
+            )
+          ],
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
@@ -237,6 +310,14 @@ class _testesPageInState extends State<testesPageIn> {
                         });
                       }
                     )
+                  ),
+                  Expanded(
+                    child: _textField("Org. por Concentracao",_qtdOrganimosController, TextInputType.number, 1,(text){
+                      _editado = true;
+                      setState(() {
+                        _testeEdit.qtdOrganimos = int.parse(text);
+                      });
+                    }),
                   )
                 ],
               ),

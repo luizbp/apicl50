@@ -30,6 +30,7 @@ dependencies:
   flutter_material_color_picker: ^1.0.5
   intl: 
   rflutter_alert: ^1.0.3
+  dio: ^3.0.10
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cl50app/models/concentracaoTeste.dart';
+import 'package:cl50app/models/dbConcentracaoTeste.dart';
+import 'package:cl50app/models/dbMortalidadeConcentracao.dart';
+import 'package:cl50app/models/mortalidadesConcentracao.dart';
 import 'package:cl50app/models/teste.dart';
 import 'teste.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +13,9 @@ class DbTestes{
 
   static DbTestes _dbTestes;
   static Database _database;
+
+  DbConcentracaoTeste dbConcentracao = DbConcentracaoTeste();
+  DbMortalidadeConcentracao dbMortalidade = DbMortalidadeConcentracao();
 
   //Padronizando nome das colunas
   String tab = 'testes';
@@ -148,6 +155,8 @@ class DbTestes{
     where: "$colId = ?",
     whereArgs: [id]);
 
+    dbConcentracao.deleteByTeste(id);
+
     return result;
   }
 
@@ -159,6 +168,57 @@ class DbTestes{
     var result = Sqflite.firstIntValue(x);
     return result;
   }
+
+  Future<String> getStringCalculo(int id, int qtdIndividuo) async{
+    Database db = await this.database;
+    List<ConcentracaoTeste> concentracoes =  List<ConcentracaoTeste>();
+    int op;
+    String result, listaConcetracao = 'c(', listaMortalidade = 'c(';
+    await dbConcentracao.getByTeste(id).then((lista) async{
+      concentracoes = lista;  
+      for (op = 0; op < concentracoes.length; op++){
+        if((op + 1) == concentracoes.length){
+          listaConcetracao += concentracoes[op].concentracao.toString() + ')';
+        }else{
+          listaConcetracao += concentracoes[op].concentracao.toString() + ',';
+        }
+        List<MortalidadeConcentracao> mortalidades =  List<MortalidadeConcentracao>();
+        await dbMortalidade.getByConcentracao(concentracoes[op].id).then((lista2){
+          mortalidades = lista2;
+          int op2;
+          int quant = 0;
+          for(op2 = 0; op2 < mortalidades.length; op2++){
+            quant += mortalidades[op2].mortalidade;
+          }
+          if((op + 1) == concentracoes.length){
+            listaMortalidade += quant.toString() + ')';
+          }else{
+            listaMortalidade += quant.toString() + ',';
+          }
+        });
+      }
+      result = listaConcetracao+','+qtdIndividuo.toString()+','+listaMortalidade;
+    });
+    return result;
+  }
+
+    //Função de Update
+  Future<int> setResultados(int id, String cl50, String max, String min) async{
+    Database db = await this.database;
+
+    var result = await db.update(tab,
+    {
+      '$colConcentracaoLetal': cl50,
+      '$colLimiteInferior': min,
+      '$colLimiteSuperior': max,
+      '$colStatusTeste': 1
+    },
+    where: '$colId = ?',
+    whereArgs: [id]);
+
+    return result;
+  }
+
 
   Future close() async{
     Database db = await this.database;

@@ -94,11 +94,11 @@ class Teste{
     nomeResponsavel = '';
     nomeOrganismo = '';
     temperaturaSala = '';
-    tipoTeste = '';
+    tipoTeste = 'Definitivo';
     substanciaAplicada = '';
     repeticoes = '';
     unidadeMedidaConcetracao = '';
-    cor = '';
+    cor = '0xFF000000';
     qtdOrganimos = 0;
     concentracaoLetal = '';
     limiteSuperior = '';

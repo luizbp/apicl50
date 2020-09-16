@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cl50app/models/dbMortalidadeConcentracao.dart';
+
 import 'concentracaoTeste.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -8,6 +10,8 @@ class DbConcentracaoTeste{
 
   static DbConcentracaoTeste _dataBaseHelper;
   static Database _dataBase;
+
+  DbMortalidadeConcentracao dbMortalidade = DbMortalidadeConcentracao();
 
   //definir colunas padronizadas 
   String tab = 'concentracaoTeste'; // NOME DA TABELA
@@ -91,7 +95,24 @@ class DbConcentracaoTeste{
     where: "$colId = ?",
     whereArgs: [id]);
 
+    dbMortalidade.deleteByConcentracao(id);
+    
     return result;
+  }
+
+  //Deletar varios
+  Future deleteByTeste(int idTeste) async{
+    Database db = await this.database;
+    int op;
+    List<ConcentracaoTeste> _dados;
+
+    await getByTeste(idTeste).then((lista){
+        _dados = lista;
+    });
+
+    for(op = 0; op < _dados.length; op++){
+      delete(_dados[op].id);
+    }
   }
 
   //Obtem o numero de linhas dentro da tabela

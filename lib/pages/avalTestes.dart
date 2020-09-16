@@ -1,14 +1,18 @@
+import 'package:cl50app/models/apiCL50.dart';
 import 'package:cl50app/models/concentracaoTeste.dart';
 import 'package:cl50app/models/dbMortalidadeConcentracao.dart';
+import 'package:cl50app/models/dbTestes.dart';
 import 'package:cl50app/models/mortalidadesConcentracao.dart';
+import 'package:cl50app/pages/testeConcluido.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+// import 'package:rflutter_alert/rflutter_alert.dart';
 import '../lib/funcoesDart.dart';
 import '../models/teste.dart';
 import '../models/concentracaoTeste.dart';
 import '../models/dbConcentracaoTeste.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
+
 
 class AvalTestes extends StatefulWidget {
   final Teste teste;
@@ -28,6 +32,9 @@ class _AvalTestesState extends State<AvalTestes> {
   List<MortalidadeConcentracao> _dadosMortalidade = List<MortalidadeConcentracao>();
   DbMortalidadeConcentracao dbMortalidade = DbMortalidadeConcentracao();
   int idConcentracaoSelecionada = 0;
+
+  CalculosAPIRepository _calculos = CalculosAPIRepository();
+  bool progressionBool = false;
 
   //
   String concentracao;
@@ -143,7 +150,7 @@ class _AvalTestesState extends State<AvalTestes> {
                 );
               },
               onTap: (){
-
+                print(_dadosMortalidade[index].id);
               }
             ),
           ),
@@ -280,14 +287,113 @@ class _AvalTestesState extends State<AvalTestes> {
     );
   }
 
-  _openPopUpMortalidade(context, int idConcentracao) {
+  _openPopUpAlertaMessage(context, String message, int type) {
     return showDialog(
       context: context,
       builder: (context){
-        return OpenDialogMortalidade(
-          idConcentracao: idConcentracao,
+        return AlertDialog(
+          title: Container(
+            child: Row(
+              children: [
+                Icon(
+                  (type == 0) ? Icons.check : Icons.close,
+                  color: (type == 0) ? Colors.green : Colors.red,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  (type == 0) ? 'Sucesso' : 'Erro'
+                )
+              ],
+            ),
+          ),
+          content: Text(message),
+          actions: [
+            MaterialButton(
+              child: Icon(
+                Icons.check,
+                color: Colors.green,
+                ),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            )
+          ],
         );
       }
+    );
+  }
+
+  Future<bool> _openPopUpPergunta(context, String message) async {
+    bool result;
+    await showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: Container(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.device_unknown,
+                  color: Colors.blue,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  message
+                )
+              ],
+            ),
+          ),
+          actions: [
+            MaterialButton(
+              child: Icon(
+                Icons.check,
+                color: Colors.green,
+                ),
+              onPressed: (){
+                result = true;
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              child: Icon(
+                Icons.close,
+                color: Colors.red,
+                ),
+              onPressed: (){
+                result = false;
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      }
+    );
+
+    return result;
+  }
+
+  _openPopUpMortalidade(context, int idConcentracao) async{
+    return await showDialog(
+      context: context,
+      builder: (context){
+        return OpenDialogMortalidade(
+          idConcentracao: idConcentracao
+        );
+        
+      }
+    ).then((value) => _atualizaMortalidade());
+  }
+
+  void _concluiTeste() async{
+     Navigator.push(
+      context, 
+      MaterialPageRoute(
+        builder: (context) => TesteConcluido()
+      )
     );
   }
 
@@ -458,7 +564,6 @@ class _AvalTestesState extends State<AvalTestes> {
                   textColor: Colors.lightBlue,
                   onPressed: (){
                     _openPopUpMortalidade(context, idConcentracaoSelecionada);
-                    _atualizaMortalidade();
                   },
                   child: Row(
                     children: [
@@ -474,8 +579,66 @@ class _AvalTestesState extends State<AvalTestes> {
                 )
               ],
             ),
-            SizedBox(
-              height: 10,
+            Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Container(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        (!progressionBool) ?
+                        RaisedButton(
+                          child: Text('Finalizar Avaliação'),
+                          color: Color(getColorTheme()),
+                          textColor: Colors.white,
+                          onPressed: () async{
+                            bool verifica;
+                            await _openPopUpPergunta(context, 'Finalizar avaliação?').then((value){
+                              verifica = value;
+                            });
+                            if(verifica){
+                              setState(() {
+                                progressionBool = true;
+                              });
+                              DbTestes db = DbTestes();
+                              String comandCalculo;
+                              db.getStringCalculo(_testeAval.id, _testeAval.qtdOrganimos).then((value) async{
+                                comandCalculo = value;
+                                Map<String, dynamic> maps = Map<String, dynamic>();
+                                await _calculos.calculacl50(comandCalculo).then((value) async{
+                                  maps = value;
+                                  if(maps['RESULT'] != 'FALHA'){
+                                    await db.setResultados(_testeAval.id, maps['CL50'], maps['MAX'], maps['MIN']);
+                                    setState(() {
+                                      progressionBool = false;
+                                    });
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(
+                                        builder: (context) => TesteConcluido(mdTeste: _testeAval)
+                                      )
+                                    );
+                                  }else{
+                                    await _openPopUpAlertaMessage(context, "Ocorreu um erro na solicitação, tente novamente", 1);
+                                    setState(() {
+                                      progressionBool = false;
+                                    });
+                                  }
+                                });
+
+                              });
+                            }
+                          },
+                        )
+                        :
+                        CircularProgressIndicator()
+                        ,
+                      ],
+                    )
+                  ],
+                ) 
+              ),
             )
           ],
         ),

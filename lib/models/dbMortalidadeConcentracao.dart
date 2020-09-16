@@ -98,6 +98,21 @@ class DbMortalidadeConcentracao{
     return result;
   }
 
+  //Deletar varios
+  Future deleteByConcentracao(int idConcentracao) async{
+    Database db = await this.database;
+    int op;
+    List<MortalidadeConcentracao> _dados;
+
+    await getByConcentracao(idConcentracao).then((lista){
+        _dados = lista;
+    });
+
+    for(op = 0; op < _dados.length; op++){
+      delete(_dados[op].id);
+    }
+  }
+
   //Obtem o numero de linhas dentro da tabela
   Future<int> getCount() async{
     Database db = await this.database;

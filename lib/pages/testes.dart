@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cl50app/models/dbTestes.dart';
+import 'package:cl50app/pages/testeConcluido.dart';
 import 'package:flutter/material.dart';
 import '../models/teste.dart';
 import 'testesEdit.dart';
@@ -63,16 +64,28 @@ class _testesPageState extends State<testesPage> {
         await dbTeste.insert(testeRecebido);
       }
       _refreshListaTestes();
+    }else{
+      _refreshListaTestes();
     }
   }
 
   void _exibeAvalTestes(Teste teste) async{
-     Navigator.push(
-      context, 
-      MaterialPageRoute(
-        builder: (context) => AvalTestes(teste)
-      )
-    );
+    //  if(teste.statusTeste == 0){
+       Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) => AvalTestes(teste)
+            // builder: (context) => TesteConcluido(mdTeste: teste)
+          )
+        );
+    //  }else{
+    //   Navigator.push(
+    //     context, 
+    //     MaterialPageRoute(
+    //       builder: (context) => TesteConcluido(mdTeste: teste)
+    //     )
+    //   );
+    //  }
   }
 
   listarTestes(){
