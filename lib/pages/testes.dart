@@ -70,7 +70,7 @@ class _testesPageState extends State<testesPage> {
   }
 
   void _exibeAvalTestes(Teste teste) async{
-    //  if(teste.statusTeste == 0){
+     if(teste.statusTeste == 0){
        Navigator.push(
           context, 
           MaterialPageRoute(
@@ -78,14 +78,14 @@ class _testesPageState extends State<testesPage> {
             // builder: (context) => TesteConcluido(mdTeste: teste)
           )
         );
-    //  }else{
-    //   Navigator.push(
-    //     context, 
-    //     MaterialPageRoute(
-    //       builder: (context) => TesteConcluido(mdTeste: teste)
-    //     )
-    //   );
-    //  }
+     }else{
+      Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => TesteConcluido(mdTeste: teste)
+        )
+      );
+     }
   }
 
   listarTestes(){

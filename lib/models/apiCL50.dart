@@ -21,10 +21,11 @@ class CalculosAPIRepository{
             'RESULT': 'SUCESSO'
           };
         }else{
+          
           return <String, dynamic>{
-            'CL50': response.data['CL50'].toString(),
-            'MIN': response.data['min'].toString(),
-            'MAX': response.data['max'].toString(),
+            'CL50': response.data['CL50'].toString() ?? '-',
+            'MIN': response.data['min'].toString() ?? '-',
+            'MAX': response.data['max'].toString() ?? '-',
             'RESULT': 'SUCESSO'
           };
         }

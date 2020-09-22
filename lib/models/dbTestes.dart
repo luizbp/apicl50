@@ -198,6 +198,7 @@ class DbTestes{
         });
       }
       result = listaConcetracao+','+qtdIndividuo.toString()+','+listaMortalidade;
+      // print(result);
     });
     return result;
   }

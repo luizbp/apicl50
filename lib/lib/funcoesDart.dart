@@ -8,6 +8,8 @@ String getIniciais(String parametro, int qtdIniciais){
   var quebra = parametro.split(' ');
   String result;
 
+  // return 'A';
+
   if(qtdIniciais == 1){
     result = quebra[0][0];
     return result;
