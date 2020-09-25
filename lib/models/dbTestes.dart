@@ -220,6 +220,20 @@ class DbTestes{
     return result;
   }
 
+  //Reabre Teste
+  Future<int> reabrir(int id) async{
+    Database db = await this.database;
+
+    var result = await db.update(tab,
+    {
+      '$colStatusTeste': 0
+    },
+    where: '$colId = ?',
+    whereArgs: [id]);
+
+    return result;
+  }
+
 
   Future close() async{
     Database db = await this.database;

@@ -38,6 +38,44 @@ class _TesteConcluidoState extends State<TesteConcluido> {
     });
   }
 
+  _openPopUpAlertaMessage(context, String message, int type) {
+    return showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: Container(
+            child: Row(
+              children: [
+                Icon(
+                  (type == 0) ? Icons.check : Icons.close,
+                  color: (type == 0) ? Colors.green : Colors.red,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  (type == 0) ? 'Sucesso' : 'Erro'
+                )
+              ],
+            ),
+          ),
+          content: Text(message),
+          actions: [
+            MaterialButton(
+              child: Icon(
+                Icons.check,
+                color: Colors.green,
+                ),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -394,14 +432,14 @@ class _TesteConcluidoState extends State<TesteConcluido> {
                                     maps = value;
                                     if(maps['RESULT'] != 'FALHA'){
                                       await db.setResultados(testeExibicao.id, maps['CL50'], maps['MAX'], maps['MIN']);
-                                      _atualizaTeste();
                                     }else{
-                                      print('Erro');
+                                      _openPopUpAlertaMessage(context, 'Ocorreu um erro, Tente novamente!', 1);
                                     }
                                   });
                                   setState(() {
                                     progressionBool = false;
                                   });
+                                  _atualizaTeste();
                                 });
                               },
                             )

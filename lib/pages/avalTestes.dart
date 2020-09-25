@@ -192,7 +192,7 @@ class _AvalTestesState extends State<AvalTestes> {
                     _popUpDeleta(
                       _dadosTeste[index].id, 
                       'Deseja deletar a concentracao ' + 
-                        _dadosTeste[index].concentracao.toString() + '?',
+                        _dadosTeste[index].concentracao.toString().replaceAll('.', ',') + '?',
                       0
                     );
                   },
@@ -206,7 +206,7 @@ class _AvalTestesState extends State<AvalTestes> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          _dadosTeste[index].concentracao.toString(),
+                          _dadosTeste[index].concentracao.toString().replaceAll('.', ','),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -254,7 +254,7 @@ class _AvalTestesState extends State<AvalTestes> {
             TextInputType.number, 
             1, 
             (valor){
-              concentracao = valor;
+              concentracao = valor.toString().replaceAll(',', '.');
             }),
           actions: [
             MaterialButton(
@@ -563,7 +563,11 @@ class _AvalTestesState extends State<AvalTestes> {
                 FlatButton(
                   textColor: Colors.lightBlue,
                   onPressed: (){
-                    _openPopUpMortalidade(context, idConcentracaoSelecionada);
+                    if(idConcentracaoSelecionada == 0){
+                      _openPopUpAlertaMessage(context,'Nenhuma concentração selecionada', 1);
+                    }else{
+                      _openPopUpMortalidade(context, idConcentracaoSelecionada);
+                    }
                   },
                   child: Row(
                     children: [
@@ -708,7 +712,9 @@ class _OpenDialogMortalidadeState extends State<OpenDialogMortalidade> {
                   TextInputType.number, 
                   1, 
                   (valor){
-                    mortalidade = valor;
+                    valor = valor.toString().replaceAll('.', '');
+                    valor = valor.toString().replaceAll(',', '');
+                    mortalidade = valor.toString();
                   }
                 )
               ),
