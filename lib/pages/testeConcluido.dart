@@ -3,6 +3,7 @@ import 'package:cl50app/models/apiCL50.dart';
 import 'package:cl50app/models/dbTestes.dart';
 import 'package:cl50app/models/teste.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 class TesteConcluido extends StatefulWidget {
   final Teste mdTeste;
@@ -22,7 +23,7 @@ class _TesteConcluidoState extends State<TesteConcluido> {
 
   DbTestes db = DbTestes();
   Teste testeExibicao;
-  bool progressionBool = false;
+  bool progressionBool = false, progressionBool2 = false;
 
   @override
   void initState(){
@@ -76,6 +77,17 @@ class _TesteConcluidoState extends State<TesteConcluido> {
     );
   }
 
+  Future<int> _popUpOpcoes(int id) async{
+    int result;
+    await showDialog(
+      context: context,
+      builder: (context){
+        return AlertOpcoes(idTeste: id,);
+      }
+    );
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +95,17 @@ class _TesteConcluidoState extends State<TesteConcluido> {
         title: Text('Finalizado'),
         centerTitle: true,
         backgroundColor: Color(getColorTheme()),
+        actions: [
+          FlatButton(
+            child: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            onPressed: (){
+              _popUpOpcoes(widget.mdTeste.id);
+            },
+          )
+        ],
       ),
       body: Container(
         child: Padding(
@@ -458,5 +481,59 @@ class _TesteConcluidoState extends State<TesteConcluido> {
         ),
       ),
     );
+  }
+}
+
+
+
+class AlertOpcoes extends StatefulWidget {
+  final int idTeste;
+
+  const AlertOpcoes({Key key, this.idTeste}) : super(key: key);
+  @override
+  _AlertOpcoesState createState() => _AlertOpcoesState();
+}
+
+class _AlertOpcoesState extends State<AlertOpcoes> {
+
+  bool progressionBool = false; 
+  DbTestes db = DbTestes();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+          title: Text('Opções', textAlign: TextAlign.center,),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              !progressionBool ? ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.green,
+                  child: Icon(
+                    Icons.share,
+                    color: Colors.white,
+                  ),
+                ),
+                title: Text(
+                  'Exportar para Excel'
+                ),
+                onTap: () async{
+                  setState(() {
+                    progressionBool = !progressionBool;
+                  });
+                  await db.gerarExcel(widget.idTeste).then((value){
+                    Share.shareFiles([value], text: 'Great picture');
+                  });
+                  setState(() {
+                    progressionBool = !progressionBool;
+                  });
+                  Navigator.pop(context);
+                },
+              )
+              :
+              CircularProgressIndicator()
+            ],
+          )
+      );
   }
 }

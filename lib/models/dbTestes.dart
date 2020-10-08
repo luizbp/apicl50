@@ -8,6 +8,12 @@ import 'package:cl50app/models/teste.dart';
 import 'teste.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:io';
+import 'package:excel/excel.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
+import 'package:path/path.dart';
 
 class DbTestes{
 
@@ -170,7 +176,6 @@ class DbTestes{
   }
 
   Future<String> getStringCalculo(int id, int qtdIndividuo) async{
-    Database db = await this.database;
     List<ConcentracaoTeste> concentracoes =  List<ConcentracaoTeste>();
     int op;
     String result, listaConcetracao = 'c(', listaMortalidade = 'c(';
@@ -232,6 +237,122 @@ class DbTestes{
     whereArgs: [id]);
 
     return result;
+  }
+
+  Future<String> gerarExcel(int id) async{
+    Database db = await this.database;
+
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    var file = "modelos/Modelo.xlsx";
+    var data = await rootBundle.load(file);
+    var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    var excel = Excel.decodeBytes(bytes);
+    
+    Teste teste = Teste(); 
+    await getById(id).then((value){
+      teste = value;
+    });
+    String nomeArquivo = teste.nome.replaceAll(' ', '_') + '_Planilhado';
+    String outputFile = '${appDocDir.path}/docs/'+nomeArquivo+'.xlsx';
+
+    var sheetObject = excel['Plan1'];
+
+    //Nome do Responsavel
+    var cell = sheetObject.cell(CellIndex.indexByString("B3"));
+    cell.value = 'Responsável: ' + teste.nomeResponsavel;
+
+    //Tipo Teste
+    cell = sheetObject.cell(CellIndex.indexByString("B5"));
+    cell.value = 'Teste: ' + teste.tipoTeste;
+
+    // Espécie
+    cell = sheetObject.cell(CellIndex.indexByString("B7"));
+    cell.value = 'Espécie: ' + teste.nomeOrganismo;
+
+    // Duração
+    cell = sheetObject.cell(CellIndex.indexByString("B8"));
+    cell.value = 'Duração: 48h';
+
+    // Temperatura
+    cell = sheetObject.cell(CellIndex.indexByString("B10"));
+    cell.value = 'Temperatura da sala (ºC): ' + teste.temperaturaSala;
+
+    // Subtância
+    cell = sheetObject.cell(CellIndex.indexByString("B11"));
+    cell.value = 'Ingrediente ativo: ' + teste.substanciaAplicada;
+
+    // Nº Animais / Repetição
+    cell = sheetObject.cell(CellIndex.indexByString("B12"));
+    cell.value = 'Nº de animais/repetição: ' + teste.qtdOrganimos.toString() + '/' + teste.repeticoes;
+
+    // Limite Superior
+    cell = sheetObject.cell(CellIndex.indexByString("E44"));
+    cell.value = teste.limiteSuperior;
+
+    // CL50
+    cell = sheetObject.cell(CellIndex.indexByString("E45"));
+    cell.value = teste.concentracaoLetal;
+
+    // Limite Inferior
+    cell = sheetObject.cell(CellIndex.indexByString("E46"));
+    cell.value = teste.limiteInferior;
+
+    List<ConcentracaoTeste> concentracoes =  List<ConcentracaoTeste>();
+
+    int op, tabela1 = 18, tabela2 = 34;
+
+    await dbConcentracao.getByTeste(id).then((lista) async{
+      concentracoes = lista;  
+      for (op = 0; op < concentracoes.length; op++){
+        
+        // Adicionando as concentrações na primeira tabela
+        cell = sheetObject.cell(CellIndex.indexByString("D"+(op + tabela1).toString()));
+        cell.value = concentracoes[op].concentracao;
+
+        // Adicionando as concentrações na segundo tabela
+        cell = sheetObject.cell(CellIndex.indexByString("C"+(op + tabela2).toString()));
+        cell.value = concentracoes[op].concentracao;
+
+        List<MortalidadeConcentracao> mortalidades =  List<MortalidadeConcentracao>();
+        await dbMortalidade.getByConcentracao(concentracoes[op].id).then((lista2){
+          mortalidades = lista2;
+          int op2;
+          int quant24 = 0, quant48 = 0;
+          for(op2 = 0; op2 < mortalidades.length; op2++){
+            if(mortalidades[op2].duracao == '24h'){
+              quant24 += mortalidades[op2].mortalidade;
+            }else{
+              quant48 += mortalidades[op2].mortalidade;
+            }
+          }
+
+          // Adicionando as mortalidades de 24 na primeira tabela
+          cell = sheetObject.cell(CellIndex.indexByString("E"+(op + tabela1).toString()));
+          cell.value = quant24;
+          // Adicionando as mortalidades de 48 na primeira tabela
+          cell = sheetObject.cell(CellIndex.indexByString("F"+(op + tabela1).toString()));
+          cell.value = quant48;
+
+          // Adicionando a soma mortalidades na segunda tabela
+          cell = sheetObject.cell(CellIndex.indexByString("D"+(op + tabela2).toString()));
+          cell.value = quant24 + quant48;
+
+          // Adicionando a média aritimetica na segunda tabela
+          cell = sheetObject.cell(CellIndex.indexByString("E"+(op + tabela2).toString()));
+          cell.value = num.parse(((quant48 * 100) / teste.qtdOrganimos).toStringAsPrecision(2));
+        });
+      }
+    });
+
+
+    // Saving the file
+    await excel.encode().then((onValue) {
+      File(join(outputFile))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(onValue);
+    });
+
+    return outputFile;
   }
 
 
