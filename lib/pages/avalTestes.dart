@@ -188,13 +188,16 @@ class _AvalTestesState extends State<AvalTestes> {
                     idConcentracaoSelecionada = _dadosTeste[index].id;
                     _atualizaMortalidade();
                   },
-                  onLongPress: (){
-                    _popUpDeleta(
+                  onLongPress: () async{
+                    await _popUpDeleta(
                       _dadosTeste[index].id, 
                       'Deseja deletar a concentracao ' + 
                         _dadosTeste[index].concentracao.toString().replaceAll('.', ',') + '?',
                       0
                     );
+                    setState(() {
+                      idConcentracaoSelecionada = 0;
+                    });
                   },
                   borderRadius: new BorderRadius.all(
                     Radius.circular(10)
@@ -607,22 +610,29 @@ class _AvalTestesState extends State<AvalTestes> {
                               });
                               DbTestes db = DbTestes();
                               String comandCalculo;
-                              db.getStringCalculo(_testeAval.id, _testeAval.qtdOrganimos).then((value) async{
+                              await db.getStringCalculo(_testeAval.id, _testeAval.qtdOrganimos).then((value) async{
                                 comandCalculo = value;
                                 Map<String, dynamic> maps = Map<String, dynamic>();
                                 await _calculos.calculacl50(comandCalculo).then((value) async{
                                   maps = value;
                                   if(maps['RESULT'] != 'FALHA'){
-                                    await db.setResultados(_testeAval.id, maps['CL50'], maps['MAX'], maps['MIN']);
-                                    setState(() {
-                                      progressionBool = false;
+                                    await db.setResultados(
+                                      _testeAval.id, 
+                                      maps['CL50'].toString(), 
+                                      maps['MAX'].toString(), 
+                                      maps['MIN'].toString()
+                                    ).then((value){
+                                      setState(() {
+                                        progressionBool = false;
+                                      });
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context, 
+                                        MaterialPageRoute(
+                                          builder: (context) => TesteConcluido(mdTeste: _testeAval)
+                                        )
+                                      );
                                     });
-                                    Navigator.push(
-                                      context, 
-                                      MaterialPageRoute(
-                                        builder: (context) => TesteConcluido(mdTeste: _testeAval)
-                                      )
-                                    );
                                   }else{
                                     await _openPopUpAlertaMessage(context, "Ocorreu um erro na solicitação, tente novamente", 1);
                                     setState(() {

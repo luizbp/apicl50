@@ -456,13 +456,13 @@ class _TesteConcluidoState extends State<TesteConcluido> {
                                     if(maps['RESULT'] != 'FALHA'){
                                       await db.setResultados(testeExibicao.id, maps['CL50'], maps['MAX'], maps['MIN']);
                                     }else{
-                                      _openPopUpAlertaMessage(context, 'Ocorreu um erro, Tente novamente!', 1);
+                                      _openPopUpAlertaMessage(context, maps['MSG'].toString(), 1);
                                     }
                                   });
+                                  await _atualizaTeste();
                                   setState(() {
                                     progressionBool = false;
                                   });
-                                  _atualizaTeste();
                                 });
                               },
                             )

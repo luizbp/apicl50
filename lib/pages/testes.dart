@@ -22,10 +22,6 @@ class _testesPageState extends State<testesPage> {
     super.initState();
     _refreshListaTestes();
   }
-
-  _deletarTeste(Teste teste){
-
-  }
   
   void _refreshListaTestes(){
     dbTeste.getAll().then((lista){
@@ -70,22 +66,24 @@ class _testesPageState extends State<testesPage> {
   }
 
   void _exibeAvalTestes(Teste teste) async{
-     if(teste.statusTeste == 0){
-       Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context) => AvalTestes(teste)
-            // builder: (context) => TesteConcluido(mdTeste: teste)
-          )
-        );
-     }else{
-      Navigator.push(
+    if(teste.statusTeste == 0){
+      await Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => AvalTestes(teste)
+          // builder: (context) => TesteConcluido(mdTeste: teste)
+        )
+      );
+      _refreshListaTestes();
+    }else{
+      await Navigator.push(
         context, 
         MaterialPageRoute(
           builder: (context) => TesteConcluido(mdTeste: teste)
         )
       );
-     }
+      _refreshListaTestes();
+    }
   }
 
   Future<bool> _openPopUpPergunta(context, String message) async {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cl50app/models/concentracaoTeste.dart';
 import 'package:cl50app/models/dbConcentracaoTeste.dart';
@@ -178,7 +179,7 @@ class DbTestes{
   Future<String> getStringCalculo(int id, int qtdIndividuo) async{
     List<ConcentracaoTeste> concentracoes =  List<ConcentracaoTeste>();
     int op;
-    String result, listaConcetracao = 'c(', listaMortalidade = 'c(';
+    String result, listaConcetracao = '(', listaMortalidade = '(';
     await dbConcentracao.getByTeste(id).then((lista) async{
       concentracoes = lista;  
       for (op = 0; op < concentracoes.length; op++){
@@ -202,8 +203,8 @@ class DbTestes{
           }
         });
       }
-      result = listaConcetracao+','+qtdIndividuo.toString()+','+listaMortalidade;
-      // print(result);
+      // result = listaConcetracao+','+qtdIndividuo.toString()+','+listaMortalidade;
+      result = '{"c" : "'+listaConcetracao+'", "i" : "'+qtdIndividuo.toString()+'", "m" : "'+listaMortalidade+'"}';
     });
     return result;
   }
@@ -231,7 +232,10 @@ class DbTestes{
 
     var result = await db.update(tab,
     {
-      '$colStatusTeste': 0
+      '$colStatusTeste': 0,
+      '$colConcentracaoLetal' : '',
+      '$colLimiteInferior' : '',
+      '$colLimiteSuperior' : ''
     },
     where: '$colId = ?',
     whereArgs: [id]);
