@@ -2,6 +2,12 @@
   "configVersion": 2,
   "packages": [
     {
+      "name": "animated_splash",
+      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/animated_splash-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/archive-2.0.13",
       "packageUri": "lib/",
@@ -302,7 +308,7 @@
       "languageVersion": "2.1"
     }
   ],
-  "generated": "2020-10-07T23:34:34.930431Z",
+  "generated": "2020-10-15T00:03:38.941580Z",
   "generator": "pub",
   "generatorVersion": "2.10.0"
 }

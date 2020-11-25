@@ -1,11 +1,26 @@
+import 'package:animated_splash/animated_splash.dart';
 import 'package:flutter/material.dart';
 import 'pages/homePage.dart';
 
-void main(){
+void main(){  
+
+  Map<int, Widget> op = {1: MyApp()};
+
+
   runApp(MaterialApp(
     title: 'TKS Mobile',
     debugShowCheckedModeBanner: false,
-    home: MyApp()
+    // home: MyApp()
+    home : AnimatedSplash(
+      imagePath: 'images/splash2.png',
+      home: HomePage(),
+      customFunction: (){
+        return 1;
+      },
+      duration: 2500,
+      type: AnimatedSplashType.BackgroundProcess,
+      outputAndHome: op
+    )
   ));
 }
 

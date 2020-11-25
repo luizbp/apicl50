@@ -34,6 +34,7 @@ dependencies:
   flutter_launcher_icons: ^0.8.0
   excel: ^1.1.5
   share: ^0.6.2
+  animated_splash: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,7 @@ flutter:
   assets:
    - images/cross.svg
    - modelos/Modelo.xlsx
+   - images/splash2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
