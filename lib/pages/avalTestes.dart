@@ -229,7 +229,7 @@ class _AvalTestesState extends State<AvalTestes> {
     );
   }
 
-  _textField(String labelText, controller, typeInput, linhas, onChanged){
+  _textField(String labelText, controller, typeInput, linhas, onChanged, {bool autoFocus = false}){
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextField(
@@ -237,6 +237,7 @@ class _AvalTestesState extends State<AvalTestes> {
         onChanged: onChanged,
         controller: controller,
         maxLines: linhas,
+        autofocus: autoFocus,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: labelText,
@@ -258,7 +259,7 @@ class _AvalTestesState extends State<AvalTestes> {
             1, 
             (valor){
               concentracao = valor.toString().replaceAll(',', '.');
-            }),
+            }, autoFocus: true),
           actions: [
             MaterialButton(
               child: Icon(
@@ -621,7 +622,12 @@ class _AvalTestesState extends State<AvalTestes> {
                                       maps['CL50'].toString(), 
                                       maps['MAX'].toString(), 
                                       maps['MIN'].toString()
-                                    ).then((value){
+                                    ).then((value) async{
+                                      
+                                      await db.getById(_testeAval.id).then((value){
+                                        _testeAval = value;
+                                      });
+
                                       setState(() {
                                         progressionBool = false;
                                       });
@@ -690,7 +696,7 @@ class _OpenDialogMortalidadeState extends State<OpenDialogMortalidade> {
   String mortalidade;
 
 
-    _textField(String labelText, controller, typeInput, linhas, onChanged){
+    _textField(String labelText, controller, typeInput, linhas, onChanged, {autoFocus = false}){
     return Padding(
       padding: const EdgeInsets.all(8),
       child: TextField(
@@ -698,6 +704,7 @@ class _OpenDialogMortalidadeState extends State<OpenDialogMortalidade> {
         onChanged: onChanged,
         controller: controller,
         maxLines: linhas,
+        autofocus: autoFocus,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: labelText,
@@ -725,7 +732,7 @@ class _OpenDialogMortalidadeState extends State<OpenDialogMortalidade> {
                     valor = valor.toString().replaceAll('.', '');
                     valor = valor.toString().replaceAll(',', '');
                     mortalidade = valor.toString();
-                  }
+                  }, autoFocus: true
                 )
               ),
             ],

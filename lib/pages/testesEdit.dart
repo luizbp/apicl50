@@ -216,7 +216,7 @@ class _testesPageInState extends State<testesPageIn> {
                     }),
                   ),
                   Expanded(
-                    child: _textField("Temp. Sala (Cº)",_temperaturaSalaController, TextInputType.text, 1,(text){
+                    child: _textField("Temp. Sala (Cº)",_temperaturaSalaController, TextInputType.number, 1,(text){
                       _editado = true;
                       setState(() {
                         _testeEdit.temperaturaSala = text;

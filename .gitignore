@@ -126,3 +126,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+
+#Documentação do Flutter no link https://dart.dev/guides/libraries/private-files
+.dart_tool/
+.packages
+build/
+#Except for application packages
+pubspec.lock 
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Mac
+.DS_Store
