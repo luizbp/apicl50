@@ -329,6 +329,61 @@ class _AvalTestesState extends State<AvalTestes> {
     );
   }
 
+  Future _finalizaTeste(contexto, Teste testeEdit) async{
+    var contextS; //Context do ShowDialog
+
+    showDialog(
+      context: contexto,
+      barrierDismissible: false,
+      builder: (contextShow){
+        contextS = contextShow;
+        return Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator()
+            ],
+          ),
+        );
+      }
+    );
+
+    DbTestes db = DbTestes();
+    String comandCalculo;
+    await db.getStringCalculo(testeEdit.id, testeEdit.qtdOrganimos).then((value) async{
+      comandCalculo = value;
+      Map<String, dynamic> maps = Map<String, dynamic>();
+      await _calculos.calculacl50(comandCalculo).then((value) async{
+        maps = value;
+        if(maps['RESULT'] != 'FALHA'){
+          await db.setResultados(
+            testeEdit.id, 
+            maps['CL50'].toString(), 
+            maps['MAX'].toString(), 
+            maps['MIN'].toString()
+          ).then((value) async{
+            await db.getById(testeEdit.id).then((value){
+              testeEdit = value;
+            });
+            Navigator.pop(contextS);
+            Navigator.pop(context);
+            Navigator.push(
+              context, 
+              MaterialPageRoute(
+                builder: (context) => TesteConcluido(mdTeste: testeEdit)
+              )
+            );
+          });
+        }else{
+          Navigator.pop(contextS);
+          await _openPopUpAlertaMessage(context, "Ocorreu um erro na solicitação, tente novamente", 1);
+        }
+      });
+    });
+  }
+
+
   Future<bool> _openPopUpPergunta(context, String message) async {
     bool result;
     await showDialog(
@@ -595,7 +650,6 @@ class _AvalTestesState extends State<AvalTestes> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        (!progressionBool) ?
                         RaisedButton(
                           child: Text('Finalizar Avaliação'),
                           color: Color(getColorTheme()),
@@ -606,54 +660,10 @@ class _AvalTestesState extends State<AvalTestes> {
                               verifica = value;
                             });
                             if(verifica){
-                              setState(() {
-                                progressionBool = true;
-                              });
-                              DbTestes db = DbTestes();
-                              String comandCalculo;
-                              await db.getStringCalculo(_testeAval.id, _testeAval.qtdOrganimos).then((value) async{
-                                comandCalculo = value;
-                                Map<String, dynamic> maps = Map<String, dynamic>();
-                                await _calculos.calculacl50(comandCalculo).then((value) async{
-                                  maps = value;
-                                  if(maps['RESULT'] != 'FALHA'){
-                                    await db.setResultados(
-                                      _testeAval.id, 
-                                      maps['CL50'].toString(), 
-                                      maps['MAX'].toString(), 
-                                      maps['MIN'].toString()
-                                    ).then((value) async{
-                                      
-                                      await db.getById(_testeAval.id).then((value){
-                                        _testeAval = value;
-                                      });
-
-                                      setState(() {
-                                        progressionBool = false;
-                                      });
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context, 
-                                        MaterialPageRoute(
-                                          builder: (context) => TesteConcluido(mdTeste: _testeAval)
-                                        )
-                                      );
-                                    });
-                                  }else{
-                                    await _openPopUpAlertaMessage(context, "Ocorreu um erro na solicitação, tente novamente", 1);
-                                    setState(() {
-                                      progressionBool = false;
-                                    });
-                                  }
-                                });
-
-                              });
+                              _finalizaTeste(context, _testeAval);
                             }
                           },
-                        )
-                        :
-                        CircularProgressIndicator()
-                        ,
+                        ),
                       ],
                     )
                   ],
