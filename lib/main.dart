@@ -12,7 +12,7 @@ void main(){
     debugShowCheckedModeBanner: false,
     // home: MyApp()
     home : AnimatedSplash(
-      imagePath: 'images/splash2.png',
+      imagePath: 'images/logo.png',
       home: HomePage(),
       customFunction: (){
         return 1;

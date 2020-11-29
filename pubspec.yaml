@@ -60,6 +60,7 @@ flutter:
    - images/cross.svg
    - modelos/Modelo.xlsx
    - images/splash2.png
+   - images/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -90,4 +91,4 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "images/tksapp.png"
+  image_path: "images/logo.png"

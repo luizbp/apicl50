@@ -335,6 +335,7 @@ class _AvalTestesState extends State<AvalTestes> {
     showDialog(
       context: contexto,
       barrierDismissible: false,
+      barrierColor: Colors.white,
       builder: (contextShow){
         contextS = contextShow;
         return Container(
@@ -342,7 +343,18 @@ class _AvalTestesState extends State<AvalTestes> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircularProgressIndicator()
+              CircularProgressIndicator(),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Calculando...',
+                style: TextStyle(
+                  fontSize: 20,
+                  decoration: TextDecoration.none,
+                  color: Colors.blue
+                ),
+              )
             ],
           ),
         );

@@ -88,6 +88,57 @@ class _TesteConcluidoState extends State<TesteConcluido> {
     return result;
   }
 
+  Future _recalcularTeste(contexto) async{
+    var contextS; //Context do ShowDialog
+
+    showDialog(
+      context: contexto,
+      barrierDismissible: false,
+      barrierColor: Colors.white,
+      builder: (contextShow){
+        contextS = contextShow;
+        return Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Recalculando...',
+                style: TextStyle(
+                  fontSize: 20,
+                  decoration: TextDecoration.none,
+                  color: Colors.blue
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    );
+
+    DbTestes db = DbTestes();
+    CalculosAPIRepository _calculos = CalculosAPIRepository();
+    String comandCalculo;
+    db.getStringCalculo(testeExibicao.id, testeExibicao.qtdOrganimos).then((value) async{
+      comandCalculo = value;
+      Map<String, dynamic> maps = Map<String, dynamic>();
+      await _calculos.calculacl50(comandCalculo).then((value) async{
+        maps = value;
+        if(maps['RESULT'] != 'FALHA'){
+          await db.setResultados(testeExibicao.id, maps['CL50'], maps['MAX'], maps['MIN']);
+        }else{
+          _openPopUpAlertaMessage(context, maps['MSG'].toString(), 1);
+        }
+      });
+      await _atualizaTeste();
+      Navigator.pop(contextS);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,8 +176,11 @@ class _TesteConcluidoState extends State<TesteConcluido> {
                         color: Colors.white,
                       ),
                       backgroundColor: Color(getColorTheme()),
-                    )
+                    ),
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -139,6 +193,9 @@ class _TesteConcluidoState extends State<TesteConcluido> {
                       ),
                     )
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -436,39 +493,14 @@ class _TesteConcluidoState extends State<TesteConcluido> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            (!progressionBool) ?
                             RaisedButton(
                               child: Text('Recalcular'),
                               color: Color(getColorTheme()),
                               textColor: Colors.white,
                               onPressed: (){
-                                setState(() {
-                                  progressionBool = true;
-                                });
-                                DbTestes db = DbTestes();
-                                CalculosAPIRepository _calculos = CalculosAPIRepository();
-                                String comandCalculo;
-                                db.getStringCalculo(testeExibicao.id, testeExibicao.qtdOrganimos).then((value) async{
-                                  comandCalculo = value;
-                                  Map<String, dynamic> maps = Map<String, dynamic>();
-                                  await _calculos.calculacl50(comandCalculo).then((value) async{
-                                    maps = value;
-                                    if(maps['RESULT'] != 'FALHA'){
-                                      await db.setResultados(testeExibicao.id, maps['CL50'], maps['MAX'], maps['MIN']);
-                                    }else{
-                                      _openPopUpAlertaMessage(context, maps['MSG'].toString(), 1);
-                                    }
-                                  });
-                                  await _atualizaTeste();
-                                  setState(() {
-                                    progressionBool = false;
-                                  });
-                                });
+                                _recalcularTeste(context);
                               },
                             )
-                            :
-                            CircularProgressIndicator()
-                            ,
                           ],
                         )
                       ],
